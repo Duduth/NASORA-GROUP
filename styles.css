@@ -1,0 +1,9 @@
+body {
+  background-image: url('pharmacie.jpg'); /* Chemin vers votre image */
+  background-size: cover; /* Pour que l'image couvre toute la surface */
+  background-position: center; /* Pour centrer l'image */
+  background-repeat: no-repeat; /* Pour éviter la répétition de l'image */
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}

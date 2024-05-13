@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil - Espace de Travail de Nasora-Group</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        body {
+            text-align: center;
+            background-image: url('pharmacie.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            padding: 20px;
+        }
+
+        .logo img {
+            width: 150px;
+            height: auto;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        h1.title {
+            margin-bottom: 30px;
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        .boutons a {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .boutons a:hover {
+            background-color: #45a049;
+        }
+
+        footer {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+
+        /* Style pour le formulaire de connexion */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5); /* Fait la page semi-transparente */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%; /* Réduire la largeur du formulaire à 50% */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ajoute une ombre légère */
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Animation pour le formulaire de connexion */
+        .animate {
+            animation: zoom 0.6s;
+        }
+
+        @keyframes zoom {
+            from {transform: scale(0)}
+            to {transform: scale(1)}
+        }
+
+        /* Style pour le formulaire */
+        .login-form input[type="text"],
+        .login-form input[type="password"] {
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: none;
+            border-bottom: 2px solid #4CAF50; /* Bordure inférieure verte */
+            background-color: #f0f0f0; /* Fond gris clair */
+            border-radius: 20px; /* Coins arrondis */
+            box-sizing: border-box;
+            transition: border-bottom-color 0.3s; /* Transition fluide pour la couleur de la bordure inférieure */
+        }
+
+        .login-form input[type="text"]:focus,
+        .login-form input[type="password"]:focus {
+            outline: none;
+            border-bottom-color: #45a049; /* Couleur de la bordure inférieure verte plus foncée au focus */
+        }
+
+        .login-form button[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background-color: #4CAF50; /* Bouton vert */
+            color: white;
+            border-radius: 20px; /* Coins arrondis */
+            cursor: pointer;
+            transition: background-color 0.3s; /* Transition fluide pour la couleur de fond */
+        }
+
+        .login-form button[type="submit"]:hover {
+            background-color: #45a049; /* Bouton vert plus foncé au survol */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="nasora-logo.png" alt="Logo de Nasora">
+        </div>
+    </header>
+    <main>
+        <h1 class="title">BIENVENUE DANS L'ESPACE DE TRAVAIL DE NASORA-GROUP</h1>
+        <div class="boutons">
+            <!-- Liens pour Nas'Medic et Nas'Derm -->
+            <a href="#" onclick="openModal('nasmedic')">Accéder à Nas'Medic</a>
+            <a href="#" onclick="openModal('nasderm')">Accéder à Nas'Derm</a>
+        </div>
+        <!-- Formulaire de connexion -->
+        <div class="modal" id="loginModal">
+            <div class="modal-content animate">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <form id="loginForm" action="#" method="POST" class="login-form">
+                    <input type="text" id="email" name="email" placeholder="Adresse e-mail" required><br>
+                    <input type="password" id="password" name="password" placeholder="Mot de passe" required><br>
+                    <button type="submit" onclick="authenticate(event)">Se connecter</button>
+                </form>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 NasoraGroupe. Tous droits réservés.</p>
+    </footer>
+
+    <!-- Script JavaScript pour afficher le formulaire de connexion -->
+    <script>
+        function openModal(service) {
+            var modal = document.getElementById('loginModal');
+            modal.style.display = 'block';
+            var form = document.getElementById('loginForm');
+            if (service === 'nasmedic') {
+                form.action = 'nasmedic.html';
+            } else if (service === 'nasderm') {
+                form.action = 'nasderm.html';
+            }
+        }
+
+        function closeModal() {
+            var modal = document.getElementById('loginModal');
+            modal.style.display = 'none';
+        }
+
+        function authenticate(event) {
+            // Empêcher le formulaire de se soumettre
+            event.preventDefault();
+            // Vérifier l'authentification ici
+            var form = document.getElementById('loginForm');
+            // Par exemple, rediriger vers la page nasmedic.html si l'authentification réussit
+            // form.action contiendra soit 'nasmedic.html' ou 'nasderm.html' en fonction du lien cliqué
+            window.location.href = form.action;
+        }
+    </script>
+</body>
+</html>

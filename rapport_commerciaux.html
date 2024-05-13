@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rapport des Commerciaux</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="navbar">
+  <a href="index.html">Tableau de Bord des Ventes</a>
+  <a href="rapport_commerciaux.html">Rapport des Commerciaux</a>
+</div>
+
+<div class="container">
+  <h1>Rapport des Commerciaux</h1>
+  <table id="tableau-commercial">
+    <thead>
+      <tr>
+        <th>Commercial</th>
+        <th>Nombre de visites</th>
+        <!-- Ajoutez d'autres en-têtes de colonnes au besoin -->
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Les données des commerciaux seront ajoutées dynamiquement ici -->
+    </tbody>
+  </table>
+</div>
+
+<script>
+  // Fonction pour charger les rapports des commerciaux
+  function chargerRapports() {
+    var rapports = JSON.parse(localStorage.getItem('rapports')) || [];
+
+    // Initialiser un objet pour stocker le nombre de visites par commercial
+    var visitesParCommercial = {};
+
+    // Parcourir les rapports et compter le nombre de visites par commercial
+    rapports.forEach(function(rapport) {
+      var site = rapport.site;
+      if (!visitesParCommercial[site]) {
+        visitesParCommercial[site] = 1;
+      } else {
+        visitesParCommercial[site]++;
+      }
+    });
+
+    // Sélectionner le corps du tableau
+    var tbody = document.querySelector("#tableau-commercial tbody");
+
+    // Réinitialiser le contenu du tableau
+    tbody.innerHTML = "";
+
+    // Ajouter chaque commercial et le nombre de visites au tableau
+    for (var commercial in visitesParCommercial) {
+      var row = document.createElement("tr");
+      var cellCommercial = document.createElement("td");
+      var cellVisites = document.createElement("td");
+      cellCommercial.textContent = commercial;
+      cellVisites.textContent = visitesParCommercial[commercial];
+      row.appendChild(cellCommercial);
+      row.appendChild(cellVisites);
+      tbody.appendChild(row);
+    }
+  }
+
+  // Appeler la fonction pour charger les rapports lors du chargement de la page
+  chargerRapports();
+</script>
+
+</body>
+</html>

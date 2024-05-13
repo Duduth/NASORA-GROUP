@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tableau de Bord des Ventes</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.css">
+    <!-- Ajout de Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-image: url('pharmacie.jpg'); /* Image de fond */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      background-color: rgba(255, 255, 255, 0.8); /* Fond semi-transparent */
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    h2 {
+      margin-top: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      cursor: pointer;
+    }
+
+    .total {
+      font-weight: bold;
+    }
+
+    .labo-selected {
+      background-color: #ccc;
+    }
+
+    #formulaire-saisie {
+      margin-top: 20px;
+    }
+
+    #formulaire-saisie form div {
+      margin-bottom: 10px;
+    }
+
+    #formulaire-saisie form label {
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Tableau de Bord des Ventes</h1>
+<!-- Barre de navigation -->
+ <nav class="nav nav-tabs justify-content-center">
+    <a class="nav-link active" href="#">Accueil</a>
+    <a class="nav-link" href="#">Ventes</a>
+    <a class="nav-link" href="#">Performances des Commerciaux</a>
+    <a class="nav-link" href="#">Stock de Produits</a>
+    <a class="nav-link" href="#">Récapitulatif des Visites</a>
+  </nav>
+
+  <h2>Tableau de Ventes</h2>
+  <div>
+    <label for="date-filtre">Filtrer par date :</label>
+    <input type="text" id="date-filtre" placeholder="Sélectionnez une date">
+  </div>
+  <div id="tableau-ventes">
+    <h3>Laboratoire GILBERT</h3>
+    <table id="ventes-gilbert"></table>
+  </div>
+
+  <h2>Saisir les ventes par article</h2>
+  <button id="btn-saisir-ventes">Saisir les ventes</button>
+  <div id="formulaire-saisie" style="display: none;">
+    <form id="form-saisie">
+      <div>
+        <label for="article">Article :</label>
+        <select id="article" name="article">
+		  <option value="ELLE TEST BTE DE 1 TEST GROSSESSE">ELLE TEST BTE DE 1 TEST GROSSESSE</option>
+		  <option value="MOUSTIDOSE SPRAY REPULSIF ZONE INFESTEES IR3535 +12M 100ML">MOUSTIDOSE SPRAY REPULSIF ZONE INFESTEES IR3535 +12M 100ML</option>
+		  <option value="MOUSTIDOSE SPRAY REPULSIF ZONE TRES INFESTEES ICARIDINE  +24M 100ML">MOUSTIDOSE SPRAY REPULSIF ACTIF VÉGÉTAL +6M 100ML</option>
+		  <option value="MOUSTIDOSE CREME SOIN CALMANT  40ML">MOUSTIDOSE CREME SOIN CALMANT  40ML</option>
+		  <option value="BACTIDOSE GEL HYDRO 75ML NON PARFUME">BACTIDOSE GEL HYDRO 75ML NON PARFUME</option>
+		  <option value="BACTIDOSE GEL HYDRO 300ML NON PARFUME +12M 100ML">BACTIDOSE GEL HYDRO 300ML NON PARFUME</option>
+		  <option value="BACTIDOSE GEL HYDRO 1L NON PARFUME">BACTIDOSE GEL HYDRO 1L NON PARFUME</option>
+		  <option value="WATERWIPES LINGETTES BD BB 4X60">WATERWIPES LINGETTES BD BB 4X60</option>
+		  <option value="WATERWIPES LINGETTES BD BB X60">WATERWIPES LINGETTES BD BB X60</option>
+		  <option value="WATERWIPES LINGETTES BD BB X28">WATERWIPES LINGETTES BD BB X28</option>
+		  <option value="LEL SUCE NOUVEAU NE SYM ROSE PANACH 2X3">LEL SUCE NOUVEAU NE SYM ROSE PANACH 2X3</option>
+		  <option value="LEL SUCE NOUVEAU NE SYM BLEU PANACHE 2X3">LEL SUCE NOUVEAU NE SYM BLEU PANACHE 2X3</option>
+		  <option value="LEL SUCE NOUVEAU NE SYM JAUNE">LEL SUCE NOUVEAU NE SYM JAUNE</option>
+		  <option value="LEL DUO SUCE ANA 0-6M LAPIN + CŒUR">LEL DUO SUCE ANA 0-6M LAPIN + CŒUR</option>
+		  <option value="LEL DUO SUCE ANA 0-6M RENARD + CŒUR">LEL DUO SUCE ANA 0-6M RENARD + CŒUR</option>
+		  <option value="LEL SUCE 0-6M ANA MAMAN ANNEAU">LEL SUCE 0-6M ANA MAMAN ANNEAU</option>
+		  <option value="LEL SUCE 0-6M ANA PAPA ANNEAU">LEL SUCE 0-6M ANA PAPA ANNEAU</option>
+		  <option value="LEL SUCE NUIT 0-6M ANA ELEPH BLEU ANNEAU">LEL SUCE NUIT 0-6M ANA ELEPH BLEU ANNEAU</option>
+		  <option value="LEL SUCE NUIT 0-6M ANA ELEPH ROSE ANNEAU">LEL SUCE NUIT 0-6M ANA ELEPH ROSE ANNEAU</option>
+		  <option value="SUCETTE 0-6 MOIS PHYSIOLOGIQUE (BÉBÉ ALLAITÉ)  ELEPHANT">SUCETTE 0-6 MOIS PHYSIOLOGIQUE (BÉBÉ ALLAITÉ)  ELEPHANT</option>
+		  <option value="LEL SUCE 6-18M ANA BEBE AMOUR ANNEAU">LEL SUCE 6-18M ANA BEBE AMOUR ANNEAU</option>
+		  <option value="LEL SUCE 6-18M ANA MAMAN ANNEAU">LEL SUCE 6-18M ANA MAMAN ANNEAU</option>
+		  <option value="LEL SUCE 6-18M ANA PAPA ANNEAU">LEL SUCE 6-18M ANA PAPA ANNEAUL</option>
+		  <option value="LEL SUCE 6-18M PHYS DIS MOI  ANNEAU">LEL SUCE 6-18M PHYS DIS MOI  ANNEAU</option>
+		  <option value="LEL SUCE +18M ANA JAIME PARENTS ANNEAU">LEL SUCE +18M ANA JAIME PARENTS ANNEAU</option>
+		  <option value="LEL BIBERON PLASTIQUE 150ML SAVANE PP">LEL BIBERON PLASTIQUE 150ML SAVANE PP</option>
+		  <option value="LEL BIBERON ERGOSENSE 270ML SAVANE PP">LEL BIBERON ERGOSENSE 270ML SAVANE PP</option>
+		  <option value="LEL BIBERON PLASTIQUE 330ML SAVANE PP">LEL BIBERON PLASTIQUE 330ML SAVANE PP</option>
+		  <option value="LEL BIBERON VERRE 120ML ">LEL BIBERON VERRE 120ML </option>
+		  <option value="LEL BIBERON VERRE 240ML ">LEL BIBERON VERRE 240ML </option>
+		  <option value="LEL TETINE ERGOSENSE SIL. DEB. LENT ( X2 )">LEL TETINE ERGOSENSE SIL. DEB. LENT ( X2 )</option>
+		  <option value="LEL TETINE ERGOSENSE SIL. DEB. MOY ( X2 )">LEL TETINE ERGOSENSE SIL. DEB. MOY ( X2 )</option>
+		  <option value="LEL TETINE ERGOSENSE SIL.DEB.VAR ( X2 )">LEL TETINE ERGOSENSE SIL.DEB.VAR ( X2 )</option>
+		  <option value="LEL TETINE ERGOSENSE DEB. LIQ.EPAIS ( X2 )">LEL TETINE ERGOSENSE DEB. LIQ.EPAIS ( X2 )</option>
+		  <option value="LEL ATTACHE SUCETTE 2023">LEL ATTACHE SUCETTE 2023</option>
+		  <option value="LEL ANNEAU DENTITION FORME HOCHET ">LEL ANNEAU DENTITION FORME HOCHET </option>
+		  <option value="LEL COUPE ONGLES BEBE">LEL COUPE ONGLES BEBE</option>
+		  <option value="LEL CISEAUX DROITS">LEL CISEAUX DROITS</option>
+		  <option value="LEL 60 BATONNETS EMBOUT BEBE">LEL 60 BATONNETS EMBOUT BEBE</option>
+		  <option value="LEL GOUPILLON">LEL GOUPILLON</option>
+		  <option value="NEUTRADERM BAUME RELIPIDANT 400ML RELIPID +">NEUTRADERM BAUME RELIPIDANT 400ML RELIPID +</option>
+		  <option value="NEUTRADERM BAUME RELIPIDANT 200ML RELIPID +">NEUTRADERM BAUME RELIPIDANT 200ML RELIPID +</option>
+		  <option value="NEUTRADERM HUILE LAVANTE RELIPIDANTE 400ML RELIPID + ">NEUTRADERM HUILE LAVANTE RELIPIDANTE 400ML RELIPID + </option>
+		  <option value="NEUTRADERM HUILE LAVANTE RELIPIDANTE 1L RELIPID + ">NEUTRADERM HUILE LAVANTE RELIPIDANTE 1L RELIPID + </option>
+		  <option value="NEUTRADERM CREME DE DOUCHE RELIPIDANTE 400ML RELIPID + ">NEUTRADERM CREME DE DOUCHE RELIPIDANTE 400ML RELIPID + </option>
+		  <option value="NEUTRADERM CREME DE DOUCHE RELIPIDANTE 200ML RELIPID + ">NEUTRADERM CREME DE DOUCHE RELIPIDANTE 200ML RELIPID + </option>
+		  <option value="NEUTRADERM GEL DOUCHE SURGRAS DERMO-PROTECTEUR 500ML">NEUTRADERM GEL DOUCHE SURGRAS DERMO-PROTECTEUR 500ML</option>
+		  <option value="NEUTRADERM GEL DOUCHE SURGRAS DERMO-PROTECTEUR 1 LITRE">NEUTRADERM GEL DOUCHE SURGRAS DERMO-PROTECTEUR 1 LITRE</option>
+		  <option value="NEUTRADERM SAVON SURGRAS DERMO-PROTECTEUR 200G">NEUTRADERM SAVON SURGRAS DERMO-PROTECTEUR 200G</option>
+		  <option value="NEUTRADERM GEL CREME NOURISSANT DERMO-PROTECTEUR TB 200ML">NEUTRADERM GEL CREME NOURISSANT DERMO-PROTECTEUR TB 200ML</option>
+		  <option value="NEUTRADERM GEL CREME NOURISSANT DERMO-PROTECTEUR 400ML">NEUTRADERM GEL CREME NOURISSANT DERMO-PROTECTEUR 400ML</option>
+		  <option value="NEUTRADERM GEL DOUCHE MICELLAIRE DERMO-APAISANT 1L">NEUTRADERM GEL DOUCHE MICELLAIRE DERMO-APAISANT 1L</option>
+		  <option value="NEUTRADERM GEL CREME HYDRATANT DERMO-APAISANT TB 200ML">NEUTRADERM GEL CREME HYDRATANT DERMO-APAISANT TB 200ML</option>
+		  <option value="NEUTRADERM GEL CREME HYDRATANT DERMO-APAISANT 400ML">NEUTRADERM GEL CREME HYDRATANT DERMO-APAISANT 400ML</option>
+		  <option value="NEUTRADERM BABY GEL NETTOYANT DOUCEUR 3 EN 1 TB 200ML">NEUTRADERM BABY GEL NETTOYANT DOUCEUR 3 EN 1 TB 200ML</option>
+		  <option value="NEUTRADERM BABY GEL NETTOYANT DOUCEUR 3 EN 1 FL. POMPE 400ML">NEUTRADERM BABY GEL NETTOYANT DOUCEUR 3 EN 1 FL. POMPE 400ML</option>
+		  <option value="NEUTRADERM BABY EAU NETTOYANTE DOUCEUR 3 EN 1 FL. CAPS. 200ML">NEUTRADERM BABY EAU NETTOYANTE DOUCEUR 3 EN 1 FL. CAPS. 200ML</option>
+		  <option value="NEUTRADERM BABY EAU NETTOYANTE DOUCEUR 3 EN 1 FL. POMPE 1L">NEUTRADERM BABY EAU NETTOYANTE DOUCEUR 3 EN 1 FL. POMPE 1L</option>
+		  <option value="NEUTRADERM BABY CREME HYDRATANTE APAISANTE TB AVEC ETUI 100ML">NEUTRADERM BABY CREME HYDRATANTE APAISANTE TB AVEC ETUI 100ML</option>
+		  <option value="NEUTRADERM SOIN LAVANT DOUCEUR INTIME FL250ML">NEUTRADERM SOIN LAVANT DOUCEUR INTIME FL250ML</option>
+		  <option value="NEUTRADERM SOIN LAVANT DOUCEUR INTIME FL500ML">NEUTRADERM SOIN LAVANT DOUCEUR INTIME FL500ML</option>
+		  <option value="NEUTRADERM CRÈME APAISANTE DOUCEUR INTIME 40ML">NEUTRADERM CRÈME APAISANTE DOUCEUR INTIME 40ML</option>
+		  <option value="NEUTRADERM BRUME D'EAU, SOIN APAISANT 150ML">NEUTRADERM BRUME D'EAU, SOIN APAISANT 150ML</option>
+		  <option value="NEUTRADERM BRUME D'EAU, SOIN APAISANT 300ML">NEUTRADERM BRUME D'EAU, SOIN APAISANT 300ML</option>
+		  <option value="LAINO GELEE HYDRATANTE ANTI OXYDANT 40ML REPACK">LAINO GELEE HYDRATANTE ANTI OXYDANT 40ML REPACK</option>
+		  <option value="LAINO CREME NOURRISSANTE ANTI OXYDANT 40ML REPACK">LAINO CREME NOURRISSANTE ANTI OXYDANT 40ML REPACK</option>
+		  <option value="LAINO SERUM HYDRATANT ANTI OXYDANT 30ML REPACK">LAINO SERUM HYDRATANT ANTI OXYDANT 30ML REPACK</option>
+		  <option value="LAINO CONTOUR DES YEUX HYDRATANT 15ML REPACK">LAINO CONTOUR DES YEUX HYDRATANT 15ML REPACK</option>
+		  <option value="LAINO GEL NETTOYANT DEMAQUILLANT 200ML REPACK">LAINO GEL NETTOYANT DEMAQUILLANT 200ML REPACK</option>
+		  <option value="LAINO GOMMAGE HYDRATANT TB75ML">LAINO GOMMAGE HYDRATANT TB75ML</option>
+		  <option value="LAINO MASQUE HYDRATANT TB75ML">LAINO MASQUE HYDRATANT TB75ML</option>
+		  <option value="LAINO LAIT HYDRATANT AMANDE DOUCE FL400ML">LAINO LAIT HYDRATANT AMANDE DOUCE FL400ML</option>
+		  <option value="LAINO SOIN NUTRITIF INTENSE OLIVE FLC400ML">LAINO SOIN NUTRITIF INTENSE OLIVE FLC400ML</option>
+		  <option value="LAINO LAIT NUTRI CONFORT KARITE FLC400ML">LAINO LAIT NUTRI CONFORT KARITE FLC400ML</option>
+		  <option value="LAINO LAIT NUTRI BIEN ETRE ROSE  FL400ML">LAINO LAIT NUTRI BIEN ETRE ROSE  FL400ML</option>
+		  <option value="LAINO LAIT NUTRI FERMETE ARGAN FLC400ML">LAINO LAIT NUTRI FERMETE ARGAN FLC400ML</option>
+		  <option value="LAINO SAVON SOUFRE  SOUS ETUI 150G">LAINO SAVON SOUFRE  SOUS ETUI 150G</option>
+		  <option value="LAINO SOIN LEVRE PRO INTENSE STICK 4G">LAINO SOIN LEVRE PRO INTENSE STICK 4G</option>
+		  <option value="LAINO SOIN LEVRES FIGUE 4G huiles végétales">LAINO SOIN LEVRES FIGUE 4G huiles végétales</option>
+		  <option value="LAI SOIN DES LEVRES FRAISE 4G">LAI SOIN DES LEVRES FRAISE 4G</option>
+		  <option value="LAI SOIN DES LEVRES VANILLE 4G">LAI SOIN DES LEVRES VANILLE 4G</option>
+		  <option value="LAI SOIN DES LEVRES GRENADINE 4G">LAI SOIN DES LEVRES GRENADINE 4G</option>
+		  <option value="LAI SOIN DES LEVRES COCO 4G">LAI SOIN DES LEVRES COCO 4G</option>
+		  <option value="LAI SOIN DES LEVRES FRAMBOISE 4G">LAI SOIN DES LEVRES FRAMBOISE 4G</option>
+		  <option value="LAI SOIN DES LEVRES CERISE 4G">LAI SOIN DES LEVRES CERISE 4G</option>
+		  <option value="LAI SOIN DES LEVRES POMME 4G">LAI SOIN DES LEVRES POMME 4G</option>
+		  <option value="LAI SOIN DES LEVRES CASSIS 4G">LAI SOIN DES LEVRES CASSIS 4G</option>
+		  <option value="LAINO CREME MAIN PRO INTENSE TB50ML">LAINO CREME MAIN PRO INTENSE TB50ML</option>
+		  <option value="LAINO SAVON SOLIDE D'ALEP ETUI150GR">LAINO SAVON SOLIDE D'ALEP ETUI150GR</option>
+		  <option value="LAINO SAVON LIQ MARSEILLE FLC300ML">LAINO SAVON LIQ MARSEILLE FLC300ML</option>
+		  <option value="LAINO L'AUTHENTIQUE SAVON MARSEILLE 150G">LAINO L'AUTHENTIQUE SAVON MARSEILLE 150G</option>
+		  <option value="LAINO PATE ARGILE VERTE TB350G">LAINO PATE ARGILE VERTE TB350G</option>
+		  <option value="LAINO ARGILE POUDRE SURFINE ETUI300G">LAINO ARGILE POUDRE SURFINE ETUI300G</option>
+		  <option value="LAINO EAU DE ROSE FLC250ML">LAINO EAU DE ROSE FLC250ML</option>
+		  <option value="LAINO EAU FLORALE DE BLEUET FLC250ML">LAINO EAU FLORALE DE BLEUET FLC250ML</option>
+		  <option value="LAINO EAU DE FLEUR D'ORANGER FLC250ML">LAINO EAU DE FLEUR D'ORANGER FLC250ML</option>
+		  <option value="HYFAC GEL NETTOYANT FLC 150ML">HYFAC GEL NETTOYANT FLC 150ML</option>
+		  <option value="HYFAC GEL NETTOYANT FLC 150ML">HYFAC GEL NETTOYANT FLC 150ML</option>
+		  <option value="HYFAC GEL NETTOYANT TB 300ML">HYFAC GEL NETTOYANT TB 300ML</option>
+		  <option value="HYFAC PAIN NETTOYANT 100G SOUS ETUI">HYFAC PAIN NETTOYANT 100G SOUS ETUI</option>
+		  <option value="HYFAC MOUSSE NETTOYANTE FLC150ML">HYFAC MOUSSE NETTOYANTE FLC150ML</option>
+		  <option value="HYFAC SOIN GLOBAL FLC40ML/ETUI">HYFAC SOIN GLOBAL FLC40ML/ETUI</option>
+		  <option value="HYFAC ETUI 2X15 PATCHS IMPERFECTIONS">HYFAC ETUI 2X15 PATCHS IMPERFECTIONS</option>
+		  <option value="HYFAC MOUSSE A RASER SENSITIVE FLC150ML">HYFAC MOUSSE A RASER SENSITIVE FLC150ML</option>
+		  <option value="HYFAC SUN SPF 50+ INV TB 40ML SS ETUI">HYFAC SUN SPF 50+ INV TB 40ML SS ETUI</option>
+		  <option value="CLARIFAC Soin anti-taches 40ML">CLARIFAC Soin anti-taches 40ML</option>
+		  <option value="HYFAC WOMAN SOIN GLOBAL TB 40ML/ETUI">HYFAC WOMAN SOIN GLOBAL TB 40ML/ETUI</option>
+		  <option value="HYFAC WOMAN LOTION VISAGE FL 200 ML">HYFAC WOMAN LOTION VISAGE FL 200 ML</option>
+		  <option value="HYFAC WOMAN ACTIVE MASK 15*5ML">HYFAC WOMAN ACTIVE MASK 15*5ML</option>
+		  <option value="HYDRAFAC CREME HYDRA LEGERE TUBE40 ML">HYDRAFAC CREME HYDRA LEGERE TUBE40 ML</option>
+		  <option value="HEI POA PUR MONOI FRANG 100ML">HEI POA PUR MONOI FRANG 100ML</option>
+		  <option value="HEI POA EDT MYTH TIA/VAN 100ML">HEI POA EDT MYTH TIA/VAN 100ML</option>
+		  <option value="HEI POA EDT MYTH TIA/FRA 100ML">HEI POA EDT MYTH TIA/FRA 100ML</option>
+		  <option value="HEI POA EDT MYTH TIA/JAS 100ML">HEI POA EDT MYTH TIA/JAS 100ML</option>
+		  <option value="HEI POA EDT MYTH TIA/PIT 100ML">HEI POA EDT MYTH TIA/PIT 100ML</option>
+		  <option value="HEI POA EDT ORCH TROP 100ML">HEI POA EDT ORCH TROP 100ML</option>
+		  <option value="HEI POA MONOI ELIX AMOUR 100ML">HEI POA MONOI ELIX AMOUR 100ML</option>
+		  <option value="HEI POA LT CORPS HYDRAT 250ML">HEI POA LT CORPS HYDRAT 250ML</option>
+		  <option value="HEI POA GEL DCHE MONOI 150ML">HEI POA GEL DCHE MONOI 150ML</option>
+		  <option value="HEI POA PUR MONOI TIARE 30ML">HEI POA PUR MONOI TIARE 30ML</option>
+		  <option value="HEI POA CR NOURRI CORPS 210ML">HEI POA CR NOURRI CORPS 210ML</option>
+		  <option value="HEI POA EDT TRESOR POLY 50ML">HEI POA EDT TRESOR POLY 50ML</option>
+		  <option value="HEI POA EDT SENSUA AQUA 50ML">HEI POA EDT SENSUA AQUA 50ML</option>
+		  <option value="HEI POA EDT MONOI LAGONS 50ML">HEI POA EDT MONOI LAGONS 50ML</option>
+		  <option value="HEI POA CR SUB VISA SPF50/50ML">HEI POA CR SUB VISA SPF50/50ML</option>
+		  <option value="LCB SAV MARS CIT-MENTHE 1L">LCB SAV MARS CIT-MENTHE 1L</option>
+		  <option value="LCB SAV MARS OLIV LAVAN 1L">LCB SAV MARS OLIV LAVAN 1L</option>
+		  <option value="LCB SAV TRADI MARS OCEAN 500ML">LCB SAV TRADI MARS OCEAN 500ML</option>
+		  <option value="LCB SAV MARS HLE ORA BIGA500ML">LCB SAV MARS HLE ORA BIGA500ML</option>
+		  <option value="LCB HUILE DE DOUCHE JASMIN 1L">LCB HUILE DE DOUCHE JASMIN 1L</option>
+		  <option value="LCB HUILE DE DOUCHE MUGUET 1L">LCB HUILE DE DOUCHE MUGUET 1L</option>
+		  <option value="LCB SAV TRADI MARS ALOE 500ML">LCA HE CITRON FL10ML BIO</option>
+		  <option value="LCA HE CITRONNELLE FL10ML BIO">LCA HE CITRONNELLE FL10ML BIO</option>
+		  <option value="LCA HE EUCAPLYP GLOBU 10ML BIO">LCA HE EUCAPLYP GLOBU 10ML BIO</option>
+		  <option value="LCA HE EUCAPLYP RADIE 10ML BIO">LCA HE EUCAPLYP RADIE 10ML BIO</option>
+		  <option value="LCA HE LAVANDE OFFICINALE BIO">LCA HE LAVANDE OFFICINALE BIO</option>
+		  <option value="LCA HE MENTHE POIVREE 10ML BIO">LCA HE MENTHE POIVREE 10ML BIO</option>
+		  <option value="LCA HE RAVINSTARA 10ML BIO">LCA HE RAVINSTARA 10ML BIO</option>
+		  <option value="LCA SPR AIR PUR ORAN/CAN 200ML">LCA SPR AIR PUR ORAN/CAN 200ML</option>
+		  <option value="LCA HE ARBRE THE FL10ML BIO">LCA HE ARBRE THE FL10ML BIO</option>
+		  <option value="LCA SPRAY AIR PUR MENT/CIT 200">LCA SPRAY AIR PUR MENT/CIT 200</option>
+		  <option value="FFLAM CISEAU PUISSANTS REF 46">FFLAM CISEAU PUISSANTS REF 46</option>
+		  <option value="FFLAM COUP ONGLE EXTRA PLAT">FFLAM COUP ONGLE EXTRA PLAT</option>
+		  <option value="FFLAM PINCE A ENVIES REF 27">FFLAM PINCE A ENVIES REF 27</option>
+		  <option value="FFLAM CURE OREILLE INOX    R75">FFLAM CURE OREILLE INOX    R75</option>
+		  <option value="FFLAM BLOC PIERRE PONCE REF98">FFLAM BLOC PIERRE PONCE REF98</option>
+		  <option value="FFLAM RAPE PLANT D/FACE REF 79">FFLAM RAPE PLANT D/FACE REF 79</option>
+        <option value="FFLAM POLISSOIR 4 FACES">FFLAM POLISSOIR 4 FACES</option>	  
+		  
+          <!-- Ajoutez ici les autres articles du laboratoire GILBERT -->
+        </select>
+      </div>
+      <div>
+        <label for="prix">Prix de vente (€) :</label>
+        <input type="text" id="prix" name="prix" placeholder="Prix de vente" step="0.01">
+      </div>
+      <div>
+        <label for="quantite">Quantité vendue :</label>
+        <input type="number" id="quantite" name="quantite" placeholder="Quantité vendue">
+      </div>
+      <div>
+        <label for="stock">Stock restant :</label>
+        <input type="number" id="stock" name="stock" placeholder="Stock restant" step="0.01">
+      </div>
+      <div>
+        <label for="mois">Mois :</label>
+        <input type="text" id="mois" name="mois" placeholder="Sélectionnez une date">
+      </div>
+      <button type="submit">Valider</button>
+    </form>
+  </div>
+
+  <h2>Évolution du Chiffre d'Affaires</h2>
+  <canvas id="graphique-chiffre-affaires"></canvas>
+
+  <div class="total">Total général : <span id="total-general"></span></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    // Initialiser le datepicker
+    $("#mois, #date-filtre").datepicker({ dateFormat: 'yy-mm-dd' });
+
+    // Charger les données depuis le stockage local
+    var ventes = JSON.parse(localStorage.getItem('ventes')) || [];
+
+    // Fonction pour sauvegarder les ventes dans le stockage local
+    function sauvegarderVentes() {
+      localStorage.setItem('ventes', JSON.stringify(ventes));
+    }
+
+    // Fonction pour générer le tableau des ventes pour le laboratoire GILBERT
+    function genererTableauVentes(ventes) {
+      var tableau = $("<table>");
+      tableau.append("<tr><th>Article</th><th>Quantité vendue</th><th>Prix de vente</th><th>Montant total</th><th>Mois</th></tr>");
+      var totalLabo = 0;
+      ventes.forEach(function(vente) {
+        var montantTotal = vente.quantite * vente.prix;
+        tableau.append("<tr><td>" + vente.article + "</td><td>" + vente.quantite + "</td><td>" + vente.prix + " €</td><td>" + montantTotal + " €</td><td>" + vente.date + "</td></tr>");
+        totalLabo += montantTotal;
+      });
+      tableau.append("<tr class='total'><td colspan='4'>Total</td><td>" + totalLabo + " €</td></tr>");
+      return tableau;
+    }
+
+    // Traiter les données saisies lors de la soumission du formulaire
+    $("#form-saisie").submit(function(event) {
+      event.preventDefault();
+
+      // Récupérer les valeurs saisies
+      var article = $("#article").val();
+      var prix = parseFloat($("#prix").val().replace(',', '.')); // Convertir la virgule en point pour les nombres décimaux
+      var quantite = parseInt($("#quantite").val());
+      var stock = parseInt($("#stock").val());
+      var mois = $("#mois").val();
+
+      // Ajouter la nouvelle vente à la liste existante
+      if (quantite > 0) {
+        ventes.push({ labo: "GILBERT", article: article, quantite: quantite, prix: prix, stock: stock, date: mois });
+      }
+
+      // Mettre à jour le tableau des ventes
+      $("#ventes-gilbert").empty().append(genererTableauVentes(ventes));
+
+      // Mettre à jour le total général
+      var totalGeneral = ventes.reduce(function(acc, vente) {
+        return acc + (vente.quantite * vente.prix);
+      }, 0);
+      $("#total-general").text(totalGeneral + " €");
+
+      // Mise à jour du graphique
+      updateChiffreAffairesGraph();
+      
+      // Cacher le formulaire de saisie
+      $("#formulaire-saisie").hide();
+
+      // Sauvegarder les ventes dans le stockage local
+      sauvegarderVentes();
+    });
+
+    // Gérer le changement de la date de filtrage
+    $("#date-filtre").change(function() {
+      var dateSelectionnee = $(this).val();
+      filtrerVentesParDate(dateSelectionnee);
+    });
+
+    // Fonction pour filtrer les ventes par date
+    function filtrerVentesParDate(dateSelectionnee) {
+      var ventesFiltrees = ventes.filter(function(vente) {
+        return vente.date === dateSelectionnee;
+      });
+
+      // Mettre à jour le tableau des ventes avec les ventes filtrées
+      $("#ventes-gilbert").empty().append(genererTableauVentes(ventesFiltrees));
+    }
+
+    // Initialiser le graphique du chiffre d'affaires
+    var ctx = document.getElementById('graphique-chiffre-affaires').getContext('2d');
+    var graphiqueChiffreAffaires = new Chart(ctx, {
+      type: 'line', // Changer le type de graphique en ligne
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Laboratoire GILBERT',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1,
+          data: [],
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Chiffre d\'affaires (€)'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Mois'
+            }
+          }
+        }
+      }
+    });
+
+    // Fonction pour mettre à jour le graphique du chiffre d'affaires
+    function updateChiffreAffairesGraph() {
+      // Réinitialiser les données du graphique
+      graphiqueChiffreAffaires.data.labels = [];
+      graphiqueChiffreAffaires.data.datasets[0].data = [];
+
+      // Agréger les ventes par mois
+      var chiffreAffairesGilbert = Array(12).fill(0);
+
+      ventes.forEach(function(vente) {
+        var mois = parseInt(vente.date.substring(5, 7)) - 1; // Récupérer le mois (0-11)
+        var montantTotal = vente.quantite * vente.prix;
+        chiffreAffairesGilbert[mois] += montantTotal;
+      });
+
+      // Mettre à jour les données du graphique
+      var date = new Date();
+      var annee = date.getFullYear();
+      for (var i = 1; i <= 12; i++) {
+        var moisCourant = i < 10 ? "0" + i : i;
+        var moisAnnee = annee + "-" + moisCourant;
+        graphiqueChiffreAffaires.data.labels.push(moisAnnee);
+        graphiqueChiffreAffaires.data.datasets[0].data.push(chiffreAffairesGilbert[i - 1]);
+      }
+
+      // Mettre à jour le graphique
+      graphiqueChiffreAffaires.update();
+    }
+
+    // Afficher le formulaire de saisie des ventes lors du clic sur le bouton
+    $("#btn-saisir-ventes").click(function() {
+      $("#formulaire-saisie").show();
+    });
+  });
+</script>
+
+</body>
+</html>

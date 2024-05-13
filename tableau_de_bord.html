@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tableau de Bord des Ventes</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.css">
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+      <!-- Ajout de Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-image: url('pharmacie.jpg'); /* Image de fond */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      background-color: rgba(255, 255, 255, 0.8); /* Fond semi-transparent */
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    h2 {
+      margin-top: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      cursor: pointer;
+    }
+
+    .total {
+      font-weight: bold;
+    }
+
+    .labo-selected {
+      background-color: #ccc;
+    }
+
+    #formulaire-saisie {
+      margin-top: 20px;
+    }
+
+    #formulaire-saisie form div {
+      margin-bottom: 10px;
+    }
+
+    #formulaire-saisie form label {
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Tableau de Bord des Ventes</h1>
+   <nav class="nav nav-tabs justify-content-center">
+    <a class="nav-link active" href="#">Accueil</a>
+    <a class="nav-link" href="#">Ventes</a>
+    <a class="nav-link" href="#">Performances des Commerciaux</a>
+    <a class="nav-link" href="#">Stock de Produits</a>
+    <a class="nav-link" href="#">Récapitulatif des Visites</a>
+  </nav>
+
+  <h2>Tableau de Ventes</h2>
+  <div id="tableau-ventes">
+    <h3>Eric Favre</h3>
+    <input type="text" id="date-filter-eric-favre" placeholder="Filtrer par date">
+    <table id="ventes-eric-favre"></table>
+
+    <h3>3 Chênes Pharma</h3>
+    <input type="text" id="date-filter-trois-chene-pharma" placeholder="Filtrer par date">
+    <table id="ventes-trois-chene-pharma"></table>
+  </div>
+
+  <h2>Saisir les ventes par article</h2>
+  <button id="btn-saisir-ventes">Saisir les ventes</button>
+  <div id="formulaire-saisie" style="display: none;">
+    <form id="form-saisie">
+      <div>
+        <label for="labo">Laboratoire :</label>
+        <select id="labo" name="labo">
+          <option value="Eric Favre">Eric Favre</option>
+          <option value="3 Chênes Pharma">3 Chênes Pharma</option>
+        </select>
+      </div>
+      <div>
+        <label for="article">Article :</label>
+        <select id="article" name="article">
+          <!-- Les options seront générées dynamiquement ici -->
+        </select>
+      </div>
+      <div>
+        <label for="prix">Prix de vente (€) :</label>
+        <input type="text" id="prix" name="prix" placeholder="Prix de vente">
+      </div>
+      <div>
+        <label for="quantite">Quantité vendue :</label>
+        <input type="number" id="quantite" name="quantite" placeholder="Quantité vendue">
+      </div>
+      <div>
+        <label for="stock">Stock restant :</label>
+        <input type="number" id="stock" name="stock" placeholder="Stock restant">
+      </div>
+      <div>
+        <label for="date">Date :</label>
+        <input type="text" id="date" name="date" placeholder="Sélectionner une date">
+      </div>
+      <button type="submit">Valider</button>
+    </form>
+  </div>
+
+  <h2>Évolution du Chiffre d'Affaires</h2>
+  <canvas id="graphique-chiffre-affaires"></canvas>
+
+  <div class="total">Total général : <span id="total-general"></span></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+<script>
+  $(document).ready(function() {
+    // Données sur les produits et les ventes
+    var ventes = [
+      { labo: "Eric Favre", article: "Chronoerect", quantite: 0, prix: 0, stock: 100, date: "2024-01" },
+      { labo: "3 Chênes Pharma", article: "ASTHE 1000", quantite: 0, prix: 0, stock: 50, date: "2024-01" }
+    ];
+
+    // Liste des articles pour chaque laboratoire
+    var articlesEricFavre = ["Chronoerect", "Special Kid calcium", "Special Kid Fer", "Special Kid immunite", "Special Kid multivit", "Special Kid nez et gorge", "Special kid nutri+", "Special kid probiotiques", "Special kid rehydratation", "Special Kid sommeil", "Special kid Soulage doux", "Special kid Zinc", "Time Sex Control", "Appetit Plus"];
+    var articlesTroisChenesPharma = ["ASTHE 1000", "BOIS BANDE", "CARBOLINE CPR B/30", "DIARILIUM ENFANT SOL BUV", "DIARILIUM SOL BV UNICADOSE", "DYSMECALM CPR B/15", "EASY MOM GROSSESSE GEL B/30", "EFIRUB CPR B/30", "EFIRUB PDRE SOL BUV SACH B/8", "FLATUPLEXIN", "MYOCALM CP", "OSTEOPHYTUM CP", "OSTEOPHYTUM GEL 100ML", "OSTEOPHYTUM PATCH/14", "SEDABUCCIL", "SOMNIPLEX MELATONINE CPR", "VAGALINE SPRAY BUCCAL F/25ML", "VAGALINE CPR B/15", "SPRAY NASAL", "MYOCALM ROLL ON 50ML", "MYOCALM SPRAY 100ML", "INFLAKIN/30", "INFLAKIN/10"];
+
+    // Fonction pour générer le tableau des ventes pour un laboratoire donné
+    function genererTableauVentes(labo, ventesData) {
+      var tableau = $("<table>");
+      tableau.append("<tr><th>Article</th><th>Quantité vendue</th><th>Prix de vente</th><th>Montant total</th><th>Date</th></tr>");
+      var totalLabo = 0;
+      ventesData.forEach(function(vente) {
+        if (vente.labo === labo && vente.quantite > 0) {
+          var montantTotal = vente.quantite * vente.prix;
+          tableau.append("<tr><td>" + vente.article + "</td><td>" + vente.quantite + "</td><td>" + vente.prix + " €</td><td>" + montantTotal + " €</td><td>" + vente.date + "</td></tr>");
+          totalLabo += montantTotal;
+        }
+      });
+      tableau.append("<tr class='total'><td colspan='4'>Total</td><td>" + totalLabo + " €</td></tr>");
+      return tableau;
+    }
+
+    // Ajouter la fonctionnalité de datepicker pour le filtrage
+    $("#date-filter-eric-favre").datepicker({
+      onSelect: function(dateText) {
+        var labo = "Eric Favre";
+        var filteredSales = ventes.filter(function(vente) {
+          return vente.labo === labo && vente.date === dateText;
+        });
+        $("#ventes-eric-favre").empty().append(genererTableauVentes(labo, filteredSales));
+      }
+    });
+
+    $("#date-filter-trois-chene-pharma").datepicker({
+      onSelect: function(dateText) {
+        var labo = "3 Chênes Pharma";
+        var filteredSales = ventes.filter(function(vente) {
+          return vente.labo === labo && vente.date === dateText;
+        });
+        $("#ventes-trois-chene-pharma").empty().append(genererTableauVentes(labo, filteredSales));
+      }
+    });
+
+    // Générer les options de la liste déroulante des articles pour un laboratoire donné
+    function genererOptionsArticles(labo) {
+      var articlesSelect = $("#article");
+      articlesSelect.empty();
+      var articles = labo === "Eric Favre" ? articlesEricFavre : articlesTroisChenesPharma;
+      articles.forEach(function(article) {
+        articlesSelect.append("<option value='" + article + "'>" + article + "</option>");
+      });
+    }
+
+    // Traiter les données saisies lors de la soumission du formulaire
+    $("#form-saisie").submit(function(event) {
+      event.preventDefault();
+
+      // Récupérer les valeurs saisies
+      var labo = $("#labo").val();
+      var article = $("#article").val();
+      var prix = parseFloat($("#prix").val().replace(',', '.')); // Convertir la virgule en point pour les nombres décimaux
+      var quantite = parseInt($("#quantite").val());
+      var stock = parseInt($("#stock").val());
+      var date = $("#date").val();
+
+      // Ajouter la nouvelle vente à la liste existante
+      if (quantite > 0) {
+        ventes.push({ labo: labo, article: article, quantite: quantite, prix: prix, stock: stock, date: date });
+      }
+
+      // Mettre à jour les tableaux de ventes et le total général
+      $("#ventes-eric-favre").empty().append(genererTableauVentes("Eric Favre", ventes.filter(v => v.labo === "Eric Favre")));
+      $("#ventes-trois-chene-pharma").empty().append(genererTableauVentes("3 Chênes Pharma", ventes.filter(v => v.labo === "3 Chênes Pharma")));
+      var totalGeneral = ventes.reduce(function(acc, vente) {
+        return acc + (vente.quantite * vente.prix);
+      }, 0);
+      $("#total-general").text(totalGeneral + " €");
+
+      // Mise à jour du graphique
+      updateChiffreAffairesGraph();
+
+      // Sauvegarde des données localement
+      saveDataLocally();
+
+      // Cacher le formulaire de saisie
+      $("#formulaire-saisie").hide();
+    });
+
+    // Initialiser la liste déroulante des articles
+    $("#labo").change(function() {
+      var laboChoisi = $(this).val();
+      genererOptionsArticles(laboChoisi);
+    });
+
+    // Afficher le formulaire de saisie des ventes lors du clic sur le bouton
+    $("#btn-saisir-ventes").click(function() {
+      $("#formulaire-saisie").show();
+    });
+
+    // Initialiser le graphique du chiffre d'affaires
+    var ctx = document.getElementById('graphique-chiffre-affaires').getContext('2d');
+    var graphiqueChiffreAffaires = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Eric Favre',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1,
+          data: [],
+        }, {
+          label: '3 Chênes Pharma',
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 1,
+          data: [],
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Chiffre d\'affaires (€)'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Date'
+            }
+          }
+        }
+      }
+    });
+
+    // Fonction pour mettre à jour le graphique du chiffre d'affaires
+    function updateChiffreAffairesGraph() {
+      // Réinitialiser les données du graphique
+      graphiqueChiffreAffaires.data.labels = [];
+      graphiqueChiffreAffaires.data.datasets[0].data = [];
+      graphiqueChiffreAffaires.data.datasets[1].data = [];
+
+      // Agréger les ventes par date
+      var chiffreAffairesEricFavre = {};
+      var chiffreAffairesTroisChenesPharma = {};
+
+      ventes.forEach(function(vente) {
+        var labo = vente.labo;
+        if (!chiffreAffairesEricFavre[vente.date]) {
+          chiffreAffairesEricFavre[vente.date] = 0;
+        }
+        if (!chiffreAffairesTroisChenesPharma[vente.date]) {
+          chiffreAffairesTroisChenesPharma[vente.date] = 0;
+        }
+        if (labo === "Eric Favre") {
+          chiffreAffairesEricFavre[vente.date] += vente.quantite * vente.prix;
+        } else if (labo === "3 Chênes Pharma") {
+          chiffreAffairesTroisChenesPharma[vente.date] += vente.quantite * vente.prix;
+        }
+      });
+
+      // Remplir les données du graphique
+      Object.keys(chiffreAffairesEricFavre).forEach(function(date) {
+        graphiqueChiffreAffaires.data.labels.push(date);
+        graphiqueChiffreAffaires.data.datasets[0].data.push(chiffreAffairesEricFavre[date]);
+      });
+
+      Object.keys(chiffreAffairesTroisChenesPharma).forEach(function(date) {
+        if (!graphiqueChiffreAffaires.data.labels.includes(date)) {
+          graphiqueChiffreAffaires.data.labels.push(date);
+        }
+        var index = graphiqueChiffreAffaires.data.labels.indexOf(date);
+        graphiqueChiffreAffaires.data.datasets[1].data[index] = chiffreAffairesTroisChenesPharma[date];
+      });
+
+      // Mettre à jour le graphique
+      graphiqueChiffreAffaires.update();
+    }
+
+    // Charger les données sauvegardées localement
+    function loadDataLocally() {
+      var data = localStorage.getItem('ventesData');
+      if (data) {
+        ventes = JSON.parse(data);
+      }
+    }
+
+    // Sauvegarder les données localement
+    function saveDataLocally() {
+      localStorage.setItem('ventesData', JSON.stringify(ventes));
+    }
+
+    // Initialisation
+    genererOptionsArticles("Eric Favre");
+    loadDataLocally();
+    updateChiffreAffairesGraph();
+  });
+</script>
+
+</body>
+</html>
